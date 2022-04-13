@@ -27,11 +27,10 @@ class ModelBooking extends CI_Model
         $this->db->join('booking_detail d', 'd.id_booking=bo.id_booking');
         $this->db->join('buku bu ', 'bu.id=d.id_buku');
         $this->db->where($where);
-
         return $this->db->get();
     }
 
-    public function simpadDetail($where = null)
+    public function simpanDetail($where = null)
     {
         $sql = "INSERT INTO booking_detail (id_booking,id_buku) SELECT booking.id_booking,temp.id_buku FROM booking, temp WHERE temp.id_user=booking.id_user AND booking.id_user='$where'";
         $this->db->query($sql);
@@ -73,7 +72,7 @@ class ModelBooking extends CI_Model
     public function selectJoin()
     {
         $this->db->select('*');
-        $this->db->form('booking');
+        $this->db->from('booking');
         $this->db->join('booking_detail', 'booking_detail.id_booking=booking.id_booking');
         $this->db->join('buku', 'booking_detail.id_buku=buku.id');
         return $this->db->get();
@@ -84,22 +83,22 @@ class ModelBooking extends CI_Model
         return $this->db->get('temp', $where);
     }
 
-    public function kodeOtomatis($table, $key)
+    public function kodeOtomatis($tabel, $key)
     {
         $this->db->select('right(' . $key . ',3) as kode', false);
         $this->db->order_by($key, 'desc');
         $this->db->limit(1);
-        $query = $this->db->get($table);
+        $query = $this->db->get($tabel);
         if ($query->num_rows() <> 0) {
             $data = $query->row();
             $kode = intval($data->kode) + 1;
-        }else {
+        } else {
             $kode = 1;
         }
 
         $kodemax = str_pad($kode, 3, "0", STR_PAD_LEFT);
         $kodejadi = date('dmY') . $kodemax;
-
+        
         return $kodejadi;
     }
 }
